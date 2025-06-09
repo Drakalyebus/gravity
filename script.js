@@ -54,7 +54,7 @@ canvas.addEventListener('click', e => {
     if (!relocated) {
         const mass = +prompt("Enter the mass of the object", '1');
         objects.push({
-            x: (e.offsetX - offsetX) / scale + mass * 10,
+            x: (e.offsetX - offsetX) / scale - mass * 10 / 5,
             y: (e.offsetY - offsetY) / scale,
             delta: Vector.random().multiply(0.1 / mass),
             radius: mass * 10,
