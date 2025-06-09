@@ -167,7 +167,7 @@ function draw() {
                 const force = distance > 0 ? G * object.mass / distance ** 2 : 0;
                 totalForce += force;
             });
-            totalForce = Math.max(0, Math.min((totalForce / maxForce / 2 + 0.5) * 255, 255));
+            totalForce = Math.max(0, Math.min((totalForce / maxForce / -2 + 0.5) * 255, 255));
             ctx.fillStyle = `rgb(${totalForce}, ${totalForce}, ${totalForce})`;
             ctx.fillRect(realX - resolution / 2, realY - resolution / 2, resolution, resolution);
         }
