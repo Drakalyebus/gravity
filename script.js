@@ -70,7 +70,7 @@ canvas.addEventListener('click', e => {
     if (!relocated) {
         const mass = +prompt("Enter the mass of the object", '1');
         const radius = Math.sqrt(Math.abs(mass) / Math.PI) * 10;
-        const localMaxForce = G * mass / radius ** 2;
+        const localMaxForce = Math.abs(G * mass) / radius ** 2;
         if (localMaxForce > maxForce) {
             maxForce = localMaxForce;
         }
