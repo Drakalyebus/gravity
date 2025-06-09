@@ -1,5 +1,6 @@
 const canvas = document.getElementById('canvas');
 const collisionCheckbox = document.getElementById('collision');
+const GInput = document.getElementById('G');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -7,7 +8,7 @@ canvas.height = window.innerHeight;
 ctx.fillStyle = `rgb(${255 / 2}, ${255 / 2}, ${255 / 2}, 1)`;
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-const G = 9.8;
+let G = 9.8;
 let offsetX = 0;
 let offsetY = 0;
 let scale = 1;
@@ -19,6 +20,9 @@ let followIds = [];
 
 collisionCheckbox.addEventListener('change', () => {
     collision = collisionCheckbox.checked;
+});
+GInput.addEventListener('input', () => {
+    G = +GInput.value;
 });
 
 class Vector {
