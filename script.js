@@ -60,7 +60,8 @@ class Vector {
     }
     static random() {
         const angle = Math.random() * 2 * Math.PI;
-        return new Vector(Math.cos(angle), Math.sin(angle));
+        const length = Math.random();
+        return new Vector(Math.cos(angle) * length, Math.sin(angle) * length);
     }
 }
 
@@ -77,7 +78,7 @@ canvas.addEventListener('click', e => {
         objects.push({
             x: (e.offsetX - offsetX) / scale,
             y: (e.offsetY - offsetY) / scale,
-            delta: Vector.random().multiply(0.1 / mass),
+            delta: Vector.random().multiply(1 / mass),
             radius,
             mass,
             color: `hsl(${(360 / 10 * objects.length) % 360}, 100%, 50%)`,
