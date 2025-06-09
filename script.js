@@ -1,4 +1,5 @@
 const canvas = document.getElementById('canvas');
+const collisionCheckbox = document.getElementById('collision');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -12,6 +13,11 @@ let offsetY = 0;
 let scale = 1;
 let isDragging = false;
 let relocated = false;
+let collision = false;
+
+collisionCheckbox.addEventListener('change', () => {
+    collision = collisionCheckbox.checked;
+});
 
 class Vector {
     constructor(x, y) {
@@ -42,6 +48,14 @@ class Vector {
         this.y /= length;
         return this;
     }
+    reverse() {
+        this.x *= -1;
+        this.y *= -1;
+        return this;
+    }
+    dot(vector) {
+        return this.x * vector.x + this.y * vector.y;
+    }
     static random() {
         const angle = Math.random() * 2 * Math.PI;
         return new Vector(Math.cos(angle), Math.sin(angle));
@@ -57,7 +71,7 @@ canvas.addEventListener('click', e => {
             x: (e.offsetX - offsetX) / scale - mass * 10 / 5,
             y: (e.offsetY - offsetY) / scale,
             delta: Vector.random().multiply(0.1 / mass),
-            radius: mass * 10,
+            radius: Math.abs(mass * 10),
             mass,
             color: `hsl(${(360 / 10 * objects.length) % 360}, 100%, 50%)`,
             path: []
@@ -80,6 +94,26 @@ function gravity() {
         object.delta.add(newDelta);
         return object;
     });
+    if (collision) {
+        objects.forEach(object => {
+            objects.filter(other => other !== object).forEach(other => {
+                if (Math.hypot(object.x - other.x, object.y - other.y) < object.radius + other.radius) {
+                    const relativeSpeed = new Vector(object.delta.x - other.delta.x, object.delta.y - other.delta.y);
+                    const direction = new Vector(other.x - object.x, other.y - object.y);
+                    direction.normalize();
+                    const speed = relativeSpeed.dot(direction);
+                    if (speed > 0) {
+                        const impulse = (2 * speed) / (object.mass + other.mass);
+                        const impulseVector = new Vector(direction.x * impulse, direction.y * impulse);
+                        const objectImpulse = new Vector(impulseVector.x * other.mass, impulseVector.y * other.mass);
+                        const otherImpulse = new Vector(impulseVector.x * object.mass, impulseVector.y * object.mass);
+                        object.delta.substract(objectImpulse);
+                        other.delta.add(otherImpulse);
+                    }
+                }
+            });
+        });
+    }
     objects.forEach(object => {
         object.x += object.delta.x;
         object.y += object.delta.y;
@@ -112,7 +146,7 @@ function draw() {
 
         ctx.stroke();
         ctx.beginPath();
-        ctx.arc(object.x, object.y, Math.abs(object.radius), 0, 2 * Math.PI);
+        ctx.arc(object.x, object.y, object.radius, 0, 2 * Math.PI);
         ctx.fillStyle = object.color;
         ctx.fill();
     });
