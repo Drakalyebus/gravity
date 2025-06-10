@@ -176,11 +176,11 @@ function draw() {
             });
             totalForce = Math.max(0, Math.min((totalForce / maxForce / -2 + 0.5) * 255, 255));
             ctx.fillStyle = `rgb(${totalForce}, ${totalForce}, ${totalForce})`;
-            ctx.fillRect(realX - resolution / 2, realY - resolution / 2, resolution, resolution);
+            ctx.fillRect(realX - resolution / 2, realY - resolution / 2, resolution + 1, resolution + 1);
         }
     }
 
-    objects.sort((a, b) => b.mass - a.mass).forEach(object => {
+    objects.sort((a, b) => b.radius - a.radius).forEach(object => {
         ctx.beginPath();
         ctx.strokeStyle = object.color;
         ctx.lineWidth = 1;
