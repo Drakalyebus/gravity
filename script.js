@@ -1,5 +1,6 @@
 const canvas = document.getElementById('canvas');
 const collisionCheckbox = document.getElementById('collision');
+const pauseCheckbox = document.getElementById('pause');
 const GInput = document.getElementById('G');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -17,12 +18,16 @@ let relocated = false;
 let collision = false;
 let maxForce = 0;
 let followIds = [];
+let onPause = false;
 
 collisionCheckbox.addEventListener('change', () => {
     collision = collisionCheckbox.checked;
 });
 GInput.addEventListener('input', () => {
     G = +GInput.value;
+});
+pauseCheckbox.addEventListener('change', () => {
+    onPause = pauseCheckbox.checked;
 });
 
 class Vector {
@@ -145,6 +150,8 @@ function draw() {
         const minScreen = Math.min(canvas.width, canvas.height);
         if (followIds.length > 1) {
             scale = Math.min(minScreen / maxDistance / 2, scale);
+        } else if (followIds.length === 1) {
+            scale = Math.min(minScreen / objects[followIds[0]].radius / 2, scale);
         }
         offsetX = canvas.width / 2 - midX * scale;
         offsetY = canvas.height / 2 - midY * scale;
@@ -194,7 +201,9 @@ function draw() {
         ctx.fill();
     });
 
-    gravity();
+    if (!onPause) {
+        gravity();
+    }
 
     requestAnimationFrame(draw);
 }
