@@ -9,7 +9,7 @@ canvas.height = window.innerHeight;
 ctx.fillStyle = `rgb(${255 / 2}, ${255 / 2}, ${255 / 2}, 1)`;
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-let G = 9.8;
+let G = 1;
 let offsetX = 0;
 let offsetY = 0;
 let scale = 1;
