@@ -7,15 +7,48 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="info-cont">
+        <div class="info">
+            <h1>Gravity simulation</h1>
+            <p>Click and drag to move the camera.</p>
+            <p>Left click to add an object.</p>
+            <p>Right click to add an object to the watch list.</p>
+            <p>Scroll to zoom in/out.</p>
+            <p>To open the settings, hover over the tab on the left side of the screen.</p>
+            <p>This simulation is based on both Newton's laws and Einstein's theory of relativity, and objects have a clock hand visible on them that shows how the local time of that object moves.</p>
+            <button id="ok">OK</button>
+        </div>
+    </div>
     <div class="menu">
+        <h1>Settings</h1>
+        <h3>Mechanic</h2>
         <div class="item">
             <input type="checkbox" id="collision">
             <span>Collision</span>
         </div>
+        <h3>Theory of relativity</h3>
         <div class="item">
-            <input type="number" id="G" value="1">
+            <input type="number" id="light" value="299792458" placeholder="299792458">
+            <span>Speed of light</span>
+        </div>
+        <div class="item">
+            <input type="number" id="factor" value="10" placeholder="10">
+            <span>Doppler factor</span>
+        </div>
+        <div class="item">
+            <input type="checkbox" id="doppler" checked>
+            <span>Doppler effect</span>
+        </div>
+        <div class="item">
+            <input type="checkbox" id="local" checked>
+            <span>Local time</span>
+        </div>
+        <h3>Gravity</h3>
+        <div class="item">
+            <input type="number" id="G" value="1" placeholder="1">
             <span>G</span>
         </div>
+        <h3>Other</h3>
         <div class="item">
             <input type="checkbox" id="pause">
             <span>Pause</span>

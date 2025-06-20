@@ -5,12 +5,15 @@
     margin: 0;
     box-sizing: border-box;
     font-family: 'Cascadia Code';
+    text-align: center;
+    transition: 0.5s ease;
 }
 html, body{
     height: 100%;
 }
 body{
     overflow: hidden;
+    position: relative;
 }
 #canvas{
     width: 100%;
@@ -29,16 +32,63 @@ input{
     padding: 10px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: start;
     gap: 10px;
     position: fixed;
     top: 10px;
     left: 10px;
-    backdrop-filter: blur(5px) brightness(0.5);
+    backdrop-filter: blur(10px) brightness(0.5);
+    transform: translateX(-100%);
+}
+.menu:hover{
+    transform: translateX(0%);
 }
 .item{
     display: flex;
     gap: 10px;
     align-items: center;
     width: 100%;
+}
+.info-cont{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    z-index: 1000;
+    backdrop-filter: blur(10px) brightness(0.5);
+}
+.info{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    justify-content: start;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    width: 30vw;
+}
+#ok{
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background-color: dodgerblue;
+    color: white;
+    outline: none;
+    border: 0px solid transparent;
+    cursor: pointer;
+}
+#ok:hover{
+    filter: brightness(0.8);
+}
+.none{
+    display: none;
 }

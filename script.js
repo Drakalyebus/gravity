@@ -1,6 +1,12 @@
 const canvas = document.getElementById('canvas');
 const collisionCheckbox = document.getElementById('collision');
+const dopplerCheckbox = document.getElementById('doppler');
+const factorInput = document.getElementById('factor');
+const localCheckbox = document.getElementById('local');
+const lightInput = document.getElementById('light');
 const pauseCheckbox = document.getElementById('pause');
+const info = document.querySelector('.info-cont');
+const okButton = document.getElementById('ok');
 const GInput = document.getElementById('G');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -10,9 +16,16 @@ ctx.fillStyle = `rgb(${255 / 2}, ${255 / 2}, ${255 / 2}, 1)`;
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 let G = 1;
+let c = 299792458;
+let maxSafeOffset = 0.01;
+let dopplerFactor = 10;
+let t = 0;
+let dt = 1;
 let offsetX = 0;
 let offsetY = 0;
 let scale = 1;
+let dopplerEffect = true;
+let localTime = true;
 let isDragging = false;
 let relocated = false;
 let collision = false;
@@ -28,6 +41,21 @@ GInput.addEventListener('input', () => {
 });
 pauseCheckbox.addEventListener('change', () => {
     onPause = pauseCheckbox.checked;
+});
+dopplerCheckbox.addEventListener('change', () => {
+    dopplerEffect = dopplerCheckbox.checked;
+});
+localCheckbox.addEventListener('change', () => {
+    localTime = localCheckbox.checked;
+});
+lightInput.addEventListener('input', () => {
+    c = +lightInput.value;
+});
+factorInput.addEventListener('input', () => {
+    dopplerFactor = +factorInput.value;
+});
+okButton.addEventListener('click', () => {
+    info.classList.add('none');
 });
 
 class Vector {
@@ -90,7 +118,9 @@ canvas.addEventListener('click', e => {
             delta: Vector.random().multiply(1 / mass),
             radius,
             mass,
-            color: `hsl(${(360 / 10 * objects.length) % 360}, 100%, 50%)`,
+            color: (360 / 10 * objects.length) % 360,
+            localTime: 0,
+            localTimeDelta: 1,
             path: []
         });
     }
@@ -132,13 +162,41 @@ function gravity() {
         });
     }
     objects.forEach(object => {
+        let speed = object.delta.length();
+        if (speed > c - maxSafeOffset) {
+            speed = c - maxSafeOffset;
+        }
+        const gamma = 1 / Math.sqrt(Math.max(1 - speed ** 2 / c ** 2, 0));
+        const phi = -objects.filter(other => other !== object).reduce((acc, other) => {
+            const distance = Math.max(Math.hypot(other.y - object.y, other.x - object.x), object.radius + other.radius);
+            return acc + G * other.mass / distance;
+        }, 0);
+        const factor = Math.sqrt(Math.max(1 + 2 * phi / c ** 2, 0));
+        object.localTimeDelta = factor * gamma * dt;
         object.x += object.delta.x;
         object.y += object.delta.y;
+        object.localTime += object.localTimeDelta;
+        if (!isFinite(object.localTime) || isNaN(object.localTime)) {
+            object.localTime = 0;
+        }
+        t += dt;
         object.path.push({x: object.x, y: object.y});
         if (object.path.length > 1000) {
             object.path.shift();
         }
     });
+}
+
+function calculateColor(object) {
+    if (dopplerEffect) {
+        const hue = object.color;
+        const speed = object.delta.length();
+        const shift = Math.sqrt(Math.max((1 + speed / c) / (1 - speed / c), 0)) - 1;
+        const shiftedHue = (hue + shift * 360 / dopplerFactor);
+        return `hsl(${Math.min(Math.max(shiftedHue, 0), 360)}deg, 100%, 50%)`;
+    } else {
+        return `hsl(${object.color}deg, 100%, 50%)`;
+    }
 }
 
 function draw() {
@@ -182,7 +240,7 @@ function draw() {
 
     objects.sort((a, b) => b.radius - a.radius).forEach(object => {
         ctx.beginPath();
-        ctx.strokeStyle = object.color;
+        ctx.strokeStyle = calculateColor(object);
         ctx.lineWidth = 1;
         ctx.lineCap = "round";
 
@@ -197,8 +255,17 @@ function draw() {
         ctx.stroke();
         ctx.beginPath();
         ctx.arc(object.x, object.y, object.radius, 0, 2 * Math.PI);
-        ctx.fillStyle = object.color;
+        ctx.fillStyle = calculateColor(object);
         ctx.fill();
+        if (localTime) {
+            ctx.beginPath();
+            ctx.moveTo(object.x, object.y);
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 1;
+            ctx.lineCap = "round";
+            ctx.lineTo(object.x + Math.cos(object.localTime / 100) * object.radius, object.y + Math.sin(object.localTime / 100) * object.radius);
+            ctx.stroke();
+        }
     });
 
     if (!onPause) {
