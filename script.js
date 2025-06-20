@@ -164,6 +164,7 @@ function gravity() {
     objects.forEach(object => {
         let speed = object.delta.length();
         if (speed > c - maxSafeOffset) {
+            object.delta.normalize().multiply(c - maxSafeOffset);
             speed = c - maxSafeOffset;
         }
         const gamma = 1 / Math.sqrt(Math.max(1 - speed ** 2 / c ** 2, 0));
