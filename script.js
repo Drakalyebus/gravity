@@ -120,7 +120,7 @@ function gravity() {
                     direction.normalize();
                     const speed = relativeSpeed.dot(direction);
                     if (speed > 0) {
-                        const impulse = (2 * speed) / (object.mass + other.mass);
+                        const impulse = (1 * speed) / (object.mass + other.mass);
                         const impulseVector = new Vector(direction.x * impulse, direction.y * impulse);
                         const objectImpulse = new Vector(impulseVector.x * other.mass, impulseVector.y * other.mass);
                         const otherImpulse = new Vector(impulseVector.x * object.mass, impulseVector.y * object.mass);
