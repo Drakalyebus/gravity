@@ -217,7 +217,6 @@ function calculateColor(object) {
 
 function draw() {
     const rotateCoefficient = 2 * Math.PI / fps;
-    ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
     if (followIds.length > 0) {
         const midX = followIds.reduce((acc, id) => acc + objects[id].x, 0) / followIds.length;
         const midY = followIds.reduce((acc, id) => acc + objects[id].y, 0) / followIds.length;
@@ -231,6 +230,7 @@ function draw() {
         offsetX = canvas.width / 2 - midX * scale;
         offsetY = canvas.height / 2 - midY * scale;
     }
+    ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
 
     ctx.fillStyle = `rgb(${255 / 2}, ${255 / 2}, ${255 / 2}, 1)`;
     ctx.fillRect(-offsetX / scale, -offsetY / scale, canvas.width / scale, canvas.height / scale);
