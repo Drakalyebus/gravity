@@ -255,24 +255,6 @@ function draw() {
         }
     }
 
-    if (localTime) {
-        const pos = {
-            x: (10 + previewRadius - offsetX) / scale,
-            y: (10 + previewRadius - offsetY) / scale
-        };
-        ctx.beginPath();
-        ctx.fillStyle = "white";
-        ctx.arc(pos.x, pos.y, previewRadius / scale, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.moveTo(pos.x, pos.y);
-        ctx.strokeStyle = "black";
-        ctx.lineWidth = 1 / scale;
-        ctx.lineCap = "round";
-        ctx.lineTo(pos.x + Math.cos(t * rotateCoefficient) * previewRadius / scale, pos.y + Math.sin(t * rotateCoefficient) * previewRadius / scale);
-        ctx.stroke();
-    }
-
     objects.slice().sort((a, b) => b.radius - a.radius).forEach((object, index) => {
         ctx.beginPath();
         ctx.strokeStyle = calculateColor(object);
@@ -322,6 +304,23 @@ function draw() {
                 ctx.stroke();
             }
         });
+    }
+    if (localTime) {
+        const pos = {
+            x: (10 + previewRadius - offsetX) / scale,
+            y: (10 + previewRadius - offsetY) / scale
+        };
+        ctx.beginPath();
+        ctx.fillStyle = "white";
+        ctx.arc(pos.x, pos.y, previewRadius / scale, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 1 / scale;
+        ctx.lineCap = "round";
+        ctx.lineTo(pos.x + Math.cos(t * rotateCoefficient) * previewRadius / scale, pos.y + Math.sin(t * rotateCoefficient) * previewRadius / scale);
+        ctx.stroke();
     }
 
     if (!onPause) {
