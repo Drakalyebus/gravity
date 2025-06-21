@@ -1,6 +1,7 @@
 const canvas = document.getElementById('canvas');
 const collisionCheckbox = document.getElementById('collision');
 const dopplerCheckbox = document.getElementById('doppler');
+const previewCheckbox = document.getElementById('preview');
 const factorInput = document.getElementById('factor');
 const localCheckbox = document.getElementById('local');
 const lightInput = document.getElementById('light');
@@ -16,9 +17,12 @@ ctx.fillStyle = `rgb(${255 / 2}, ${255 / 2}, ${255 / 2}, 1)`;
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 let G = 1;
+let preview = true;
+let previewRadius = 10;
 let c = 299792458;
 let maxSafeOffset = 0.01;
 let dopplerFactor = 10;
+let fps = 60;
 let t = 0;
 let dt = 1;
 let offsetX = 0;
@@ -64,6 +68,9 @@ factorInput.addEventListener('input', () => {
 });
 okButton.addEventListener('click', () => {
     info.classList.add('none');
+});
+previewCheckbox.addEventListener('change', () => {
+    preview = previewCheckbox.checked;
 });
 
 class Vector {
@@ -128,13 +135,14 @@ canvas.addEventListener('click', e => {
             mass,
             color: (360 / 10 * objects.length) % 360,
             localTime: t,
-            localTimeDelta: 1,
+            localTimeDelta: dt,
             path: []
         });
     }
 });
 
 function gravity() {
+    t += dt;
     objects = objects.map(object => {
         const newDelta = new Vector(0, 0);
         objects.filter(other => other !== object).forEach(other => {
@@ -188,7 +196,6 @@ function gravity() {
         if (!isFinite(object.localTime) || isNaN(object.localTime)) {
             object.localTime = 0;
         }
-        t += dt;
         object.path.push({x: object.x, y: object.y});
         if (object.path.length > 1000) {
             object.path.shift();
@@ -209,6 +216,7 @@ function calculateColor(object) {
 }
 
 function draw() {
+    const rotateCoefficient = 2 * Math.PI / fps;
     ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
     if (followIds.length > 0) {
         const midX = followIds.reduce((acc, id) => acc + objects[id].x, 0) / followIds.length;
@@ -247,7 +255,25 @@ function draw() {
         }
     }
 
-    objects.sort((a, b) => b.radius - a.radius).forEach(object => {
+    if (localTime) {
+        const pos = {
+            x: (10 + previewRadius - offsetX) / scale,
+            y: (10 + previewRadius - offsetY) / scale
+        };
+        ctx.beginPath();
+        ctx.fillStyle = "white";
+        ctx.arc(pos.x, pos.y, previewRadius / scale, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 1 / scale;
+        ctx.lineCap = "round";
+        ctx.lineTo(pos.x + Math.cos(t * rotateCoefficient) * previewRadius / scale, pos.y + Math.sin(t * rotateCoefficient) * previewRadius / scale);
+        ctx.stroke();
+    }
+
+    objects.slice().sort((a, b) => b.radius - a.radius).forEach((object, index) => {
         ctx.beginPath();
         ctx.strokeStyle = calculateColor(object);
         ctx.lineWidth = 1;
@@ -272,10 +298,31 @@ function draw() {
             ctx.strokeStyle = "black";
             ctx.lineWidth = 1;
             ctx.lineCap = "round";
-            ctx.lineTo(object.x + Math.cos(object.localTime / 100) * object.radius, object.y + Math.sin(object.localTime / 100) * object.radius);
+            ctx.lineTo(object.x + Math.cos(object.localTime * rotateCoefficient) * object.radius, object.y + Math.sin(object.localTime * rotateCoefficient) * object.radius);
             ctx.stroke();
         }
     });
+    if (preview) {
+        objects.forEach((object, index) => {
+            ctx.beginPath();
+            const pos = {
+                x: (previewRadius + 10 + (index + localTime) * (previewRadius * 2 + 10) - offsetX) / scale,
+                y: (10 + previewRadius - offsetY) / scale
+            };
+            ctx.fillStyle = calculateColor(object);
+            ctx.arc(pos.x, pos.y, previewRadius / scale, 0, 2 * Math.PI);
+            ctx.fill();
+            if (localTime) {
+                ctx.beginPath();
+                ctx.moveTo(pos.x, pos.y);
+                ctx.strokeStyle = "black";
+                ctx.lineWidth = 1 / scale;
+                ctx.lineCap = "round";
+                ctx.lineTo(pos.x + Math.cos(object.localTime * rotateCoefficient) * previewRadius / scale, pos.y + Math.sin(object.localTime * rotateCoefficient) * previewRadius / scale);
+                ctx.stroke();
+            }
+        });
+    }
 
     if (!onPause) {
         gravity();
@@ -294,6 +341,16 @@ canvas.addEventListener("contextmenu", (e) => {
         const distance = Math.hypot((e.offsetX - offsetX) / scale - object.x, (e.offsetY - offsetY) / scale - object.y);
         return distance < object.radius;
     });
+    if (id === -1 && preview) {
+        id = objects.findIndex((object, index) => {
+            const pos = {
+                x: (previewRadius + 10 + (index + localTime) * (previewRadius * 2 + 10) - offsetX) / scale,
+                y: (10 + previewRadius - offsetY) / scale
+            };
+            const distance = Math.hypot((e.offsetX - offsetX) / scale - pos.x, (e.offsetY - offsetY) / scale - pos.y) * scale;
+            return distance < previewRadius;
+        });
+    }
     if (id !== -1) {
         if (followIds.includes(id)) {
             followIds.splice(followIds.indexOf(id), 1);
