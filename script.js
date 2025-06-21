@@ -337,10 +337,10 @@ let startX, startY;
 
 canvas.addEventListener("contextmenu", (e) => {
     e.preventDefault();
-    let id = objects.findIndex(object => {
+    let id = objects.indexOf(objects.slice().sort((a, b) => a.radius - b.radius).find(object => {
         const distance = Math.hypot((e.offsetX - offsetX) / scale - object.x, (e.offsetY - offsetY) / scale - object.y);
         return distance < object.radius;
-    });
+    }));
     if (id === -1 && preview) {
         id = objects.findIndex((object, index) => {
             const pos = {
