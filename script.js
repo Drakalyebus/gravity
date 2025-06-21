@@ -38,6 +38,14 @@ collisionCheckbox.addEventListener('change', () => {
 });
 GInput.addEventListener('input', () => {
     G = +GInput.value;
+    let newMaxForce = 0;
+    objects.forEach(object => {
+        const localMaxForce = Math.abs(G * object.mass) / object.radius ** 2;
+        if (localMaxForce > newMaxForce) {
+            newMaxForce = localMaxForce;
+        }
+    });
+    maxForce = newMaxForce;
 });
 pauseCheckbox.addEventListener('change', () => {
     onPause = pauseCheckbox.checked;
@@ -119,7 +127,7 @@ canvas.addEventListener('click', e => {
             radius,
             mass,
             color: (360 / 10 * objects.length) % 360,
-            localTime: 0,
+            localTime: t,
             localTimeDelta: 1,
             path: []
         });
