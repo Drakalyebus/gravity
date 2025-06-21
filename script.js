@@ -360,46 +360,55 @@ canvas.addEventListener("contextmenu", (e) => {
     }
 });
 
-canvas.addEventListener("mousedown", (e) => {
+function mousedown(e) {
     isDragging = true;
-    startX = e.clientX;
-    startY = e.clientY;
-});
+    startX = e.offsetX;
+    startY = e.offsetY;
+}
 
-canvas.addEventListener("mousemove", (e) => {
+function mousemove(e) {
     if (isDragging) {
         relocated = true;
-        offsetX += (e.clientX - startX);
-        offsetY += (e.clientY - startY);
-        startX = e.clientX;
-        startY = e.clientY;
+        offsetX += (e.offsetX - startX);
+        offsetY += (e.offsetY - startY);
+        startX = e.offsetX;
+        startY = e.offsetY;
     }
-});
+}
 
-canvas.addEventListener("mouseup", () => { isDragging = false; setTimeout(() => relocated = false, 0) });
+function mouseup() {
+    isDragging = false;
+    setTimeout(() => relocated = false, 0)
+}
 
-canvas.addEventListener("wheel", (e) => {
-    e.preventDefault(); // Предотвращаем скролл страницы
+function wheel(e) {
+    e.preventDefault();
 
     const zoomFactor = 1.1;
-    const mouseX = e.clientX - canvas.offsetLeft;
-    const mouseY = e.clientY - canvas.offsetTop;
+    const mouseX = e.offsetX - canvas.offsetLeft;
+    const mouseY = e.offsetY - canvas.offsetTop;
 
-    // Преобразуем координаты курсора в систему координат `canvas`
     const worldX = (mouseX - offsetX) / scale;
     const worldY = (mouseY - offsetY) / scale;
 
-    // Определяем направление масштабирования
     if (e.deltaY < 0) {
-        scale *= zoomFactor; // Увеличение
+        scale *= zoomFactor;
     } else {
-        scale /= zoomFactor; // Уменьшение
+        scale /= zoomFactor;
     }
 
-    // Корректируем смещение так, чтобы приближение было относительно курсора
     offsetX = mouseX - worldX * scale;
     offsetY = mouseY - worldY * scale;
-});
+}
+
+canvas.addEventListener("mousedown", mousedown);
+
+canvas.addEventListener("mousemove", mousemove);
+
+canvas.addEventListener("mouseup", mouseup);
+canvas.addEventListener("mouseleave", mouseup);
+
+canvas.addEventListener("wheel", wheel);
 
 window.addEventListener("resize", () => {
     canvas.width = window.innerWidth;
