@@ -2,6 +2,7 @@ const canvas = document.getElementById('canvas');
 const collisionCheckbox = document.getElementById('collision');
 const dopplerCheckbox = document.getElementById('doppler');
 const previewCheckbox = document.getElementById('preview');
+const reverseTime = document.getElementById('reverse');
 const factorInput = document.getElementById('factor');
 const localCheckbox = document.getElementById('local');
 const lightInput = document.getElementById('light');
@@ -71,6 +72,13 @@ okButton.addEventListener('click', () => {
 });
 previewCheckbox.addEventListener('change', () => {
     preview = previewCheckbox.checked;
+});
+reverseTime.addEventListener('click', () => {
+    dt *= -1;
+    objects.forEach(object => {
+        object.localTimeDelta *= -1;
+        object.delta.reverse();
+    });
 });
 
 class Vector {
