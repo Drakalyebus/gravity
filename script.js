@@ -20,6 +20,7 @@ ctx.fillRect(0, 0, canvas.width, canvas.height);
 let G = 1;
 let preview = true;
 let previewRadius = 10;
+let reversed = false;
 let c = 299792458;
 let maxSafeOffset = 0.01;
 let dopplerFactor = 10;
@@ -75,6 +76,7 @@ previewCheckbox.addEventListener('change', () => {
 });
 reverseTime.addEventListener('click', () => {
     dt *= -1;
+    reversed = !reversed;
     objects.forEach(object => {
         object.localTimeDelta *= -1;
         object.delta.reverse();
@@ -166,8 +168,9 @@ function gravity() {
         return object;
     });
     if (collision) {
-        objects.forEach(object => {
-            objects.filter(other => other !== object).forEach(other => {
+        let used = [];
+        objects.forEach((object, index) => {
+            objects.filter((other, otherIndex) => other !== object && !used.includes(otherIndex)).forEach(other => {
                 if (Math.hypot(object.x - other.x, object.y - other.y) < object.radius + other.radius) {
                     const relativeSpeed = new Vector(object.delta.x - other.delta.x, object.delta.y - other.delta.y);
                     const direction = new Vector(other.x - object.x, other.y - object.y);
@@ -183,6 +186,7 @@ function gravity() {
                     }
                 }
             });
+            used.push(index);
         });
     }
     objects.forEach(object => {
