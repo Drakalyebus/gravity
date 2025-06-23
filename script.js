@@ -8,6 +8,7 @@ const localCheckbox = document.getElementById('local');
 const lightInput = document.getElementById('light');
 const pauseCheckbox = document.getElementById('pause');
 const info = document.querySelector('.info-cont');
+const syncButton = document.getElementById('sync');
 const okButton = document.getElementById('ok');
 const GInput = document.getElementById('G');
 const ctx = canvas.getContext('2d');
@@ -80,6 +81,11 @@ reverseTime.addEventListener('click', () => {
     objects.forEach(object => {
         object.localTimeDelta *= -1;
         object.delta.reverse();
+    });
+});
+syncButton.addEventListener('click', () => {
+    objects.forEach(object => {
+        object.localTime = t;
     });
 });
 
