@@ -138,22 +138,24 @@ let objects = [];
 canvas.addEventListener('click', e => {
     if (!relocated) {
         const mass = +prompt("Enter the mass of the object", '1');
-        const radius = Math.sqrt(Math.abs(mass) / Math.PI) * 10;
-        const localMaxForce = Math.abs(G * mass) / radius ** 2;
-        if (localMaxForce > maxForce) {
-            maxForce = localMaxForce;
+        if (!isNaN(mass) && mass !== 0) {
+            const radius = Math.sqrt(Math.abs(mass) / Math.PI) * 10;
+            const localMaxForce = Math.abs(G * mass) / radius ** 2;
+            if (localMaxForce > maxForce) {
+                maxForce = localMaxForce;
+            }
+            objects.push({
+                x: (e.offsetX - offsetX) / scale,
+                y: (e.offsetY - offsetY) / scale,
+                delta: Vector.random().multiply(1 / mass),
+                radius,
+                mass,
+                color: (360 / 10 * objects.length) % 360,
+                localTime: t,
+                localTimeDelta: dt,
+                path: []
+            });
         }
-        objects.push({
-            x: (e.offsetX - offsetX) / scale,
-            y: (e.offsetY - offsetY) / scale,
-            delta: Vector.random().multiply(1 / mass),
-            radius,
-            mass,
-            color: (360 / 10 * objects.length) % 360,
-            localTime: t,
-            localTimeDelta: dt,
-            path: []
-        });
     }
 });
 
