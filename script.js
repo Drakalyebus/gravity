@@ -356,19 +356,19 @@ let startX, startY;
 
 canvas.addEventListener("contextmenu", (e) => {
     e.preventDefault();
-    let id = objects.indexOf(objects.slice().sort((a, b) => a.radius - b.radius).find(object => {
-        const distance = Math.hypot((e.offsetX - offsetX) / scale - object.x, (e.offsetY - offsetY) / scale - object.y);
-        return distance < object.radius;
-    }));
-    if (id === -1 && preview) {
-        id = objects.findIndex((object, index) => {
-            const pos = {
-                x: (previewRadius + 10 + (index + localTime) * (previewRadius * 2 + 10) - offsetX) / scale,
-                y: (10 + previewRadius - offsetY) / scale
-            };
-            const distance = Math.hypot((e.offsetX - offsetX) / scale - pos.x, (e.offsetY - offsetY) / scale - pos.y) * scale;
-            return distance < previewRadius;
-        });
+    let id = preview ? objects.findIndex((object, index) => {
+        const pos = {
+            x: (previewRadius + 10 + (index + localTime) * (previewRadius * 2 + 10) - offsetX) / scale,
+            y: (10 + previewRadius - offsetY) / scale
+        };
+        const distance = Math.hypot((e.offsetX - offsetX) / scale - pos.x, (e.offsetY - offsetY) / scale - pos.y) * scale;
+        return distance < previewRadius;
+    }) : -1;
+    if (id === -1) {
+        id = objects.indexOf(objects.slice().sort((a, b) => a.radius - b.radius).find(object => {
+            const distance = Math.hypot((e.offsetX - offsetX) / scale - object.x, (e.offsetY - offsetY) / scale - object.y);
+            return distance < object.radius;
+        }));
     }
     if (id !== -1) {
         if (followIds.includes(id)) {
