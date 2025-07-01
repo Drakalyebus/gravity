@@ -288,12 +288,17 @@ function draw() {
                 ctx.lineTo(point.x, point.y);
             }
         });
-
         ctx.stroke();
         ctx.beginPath();
         ctx.arc(object.x, object.y, object.radius, 0, 2 * Math.PI);
         ctx.fillStyle = calculateColor(object);
         ctx.fill();
+        if (followIds.includes(index)) {
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 1;
+            ctx.lineCap = "round";
+            ctx.stroke();
+        }
         if (localTime) {
             ctx.beginPath();
             ctx.moveTo(object.x, object.y);
@@ -314,6 +319,12 @@ function draw() {
             ctx.fillStyle = calculateColor(object);
             ctx.arc(pos.x, pos.y, previewRadius / scale, 0, 2 * Math.PI);
             ctx.fill();
+            if (followIds.includes(index)) {
+                ctx.strokeStyle = "white";
+                ctx.lineWidth = 1 / scale;
+                ctx.lineCap = "round";
+                ctx.stroke();
+            }
             if (localTime) {
                 ctx.beginPath();
                 ctx.moveTo(pos.x, pos.y);
@@ -371,10 +382,14 @@ canvas.addEventListener("contextmenu", (e) => {
         }));
     }
     if (id !== -1) {
-        if (followIds.includes(id)) {
-            followIds.splice(followIds.indexOf(id), 1);
-        } else {
-            followIds.push(id);
+        if (confirm('Follow/unfollow this object?')) {
+            if (followIds.includes(id)) {
+                followIds.splice(followIds.indexOf(id), 1);
+            } else {
+                followIds.push(id);
+            }
+        } else if (confirm('Delete this object?')) {
+            objects.splice(id, 1);
         }
     }
 });
