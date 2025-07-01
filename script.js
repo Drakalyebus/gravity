@@ -294,7 +294,7 @@ function draw() {
         ctx.fillStyle = calculateColor(object);
         ctx.fill();
         if (followIds.includes(index)) {
-            ctx.strokeStyle = "white";
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
             ctx.lineWidth = 2 / scale;
             ctx.lineCap = "round";
             ctx.stroke();
@@ -302,7 +302,7 @@ function draw() {
         if (localTime) {
             ctx.beginPath();
             ctx.moveTo(object.x, object.y);
-            ctx.strokeStyle = "black";
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
             ctx.lineWidth = 2 / scale;
             ctx.lineCap = "round";
             ctx.lineTo(object.x + Math.cos(object.localTime * rotateCoefficient) * object.radius, object.y + Math.sin(object.localTime * rotateCoefficient) * object.radius);
@@ -320,7 +320,7 @@ function draw() {
             ctx.arc(pos.x, pos.y, previewRadius / scale, 0, 2 * Math.PI);
             ctx.fill();
             if (followIds.includes(index)) {
-                ctx.strokeStyle = "white";
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
                 ctx.lineWidth = 2 / scale;
                 ctx.lineCap = "round";
                 ctx.stroke();
@@ -328,7 +328,7 @@ function draw() {
             if (localTime) {
                 ctx.beginPath();
                 ctx.moveTo(pos.x, pos.y);
-                ctx.strokeStyle = "black";
+                ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
                 ctx.lineWidth = 2 / scale;
                 ctx.lineCap = "round";
                 ctx.lineTo(pos.x + Math.cos(object.localTime * rotateCoefficient) * previewRadius / scale, pos.y + Math.sin(object.localTime * rotateCoefficient) * previewRadius / scale);
@@ -347,7 +347,7 @@ function draw() {
         ctx.fill();
         ctx.beginPath();
         ctx.moveTo(pos.x, pos.y);
-        ctx.strokeStyle = "black";
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
         ctx.lineWidth = 2 / scale;
         ctx.lineCap = "round";
         ctx.lineTo(pos.x + Math.cos(t * rotateCoefficient) * previewRadius / scale, pos.y + Math.sin(t * rotateCoefficient) * previewRadius / scale);
