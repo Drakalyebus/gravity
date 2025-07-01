@@ -278,7 +278,7 @@ function draw() {
     objects.slice().sort((a, b) => b.radius - a.radius).forEach((object, index) => {
         ctx.beginPath();
         ctx.strokeStyle = calculateColor(object);
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 2 / scale;
         ctx.lineCap = "round";
 
         object.path.forEach((point, index) => {
@@ -295,7 +295,7 @@ function draw() {
         ctx.fill();
         if (followIds.includes(index)) {
             ctx.strokeStyle = "white";
-            ctx.lineWidth = 1;
+            ctx.lineWidth = 2 / scale;
             ctx.lineCap = "round";
             ctx.stroke();
         }
@@ -303,7 +303,7 @@ function draw() {
             ctx.beginPath();
             ctx.moveTo(object.x, object.y);
             ctx.strokeStyle = "black";
-            ctx.lineWidth = 1;
+            ctx.lineWidth = 2 / scale;
             ctx.lineCap = "round";
             ctx.lineTo(object.x + Math.cos(object.localTime * rotateCoefficient) * object.radius, object.y + Math.sin(object.localTime * rotateCoefficient) * object.radius);
             ctx.stroke();
@@ -321,7 +321,7 @@ function draw() {
             ctx.fill();
             if (followIds.includes(index)) {
                 ctx.strokeStyle = "white";
-                ctx.lineWidth = 1 / scale;
+                ctx.lineWidth = 2 / scale;
                 ctx.lineCap = "round";
                 ctx.stroke();
             }
@@ -329,7 +329,7 @@ function draw() {
                 ctx.beginPath();
                 ctx.moveTo(pos.x, pos.y);
                 ctx.strokeStyle = "black";
-                ctx.lineWidth = 1 / scale;
+                ctx.lineWidth = 2 / scale;
                 ctx.lineCap = "round";
                 ctx.lineTo(pos.x + Math.cos(object.localTime * rotateCoefficient) * previewRadius / scale, pos.y + Math.sin(object.localTime * rotateCoefficient) * previewRadius / scale);
                 ctx.stroke();
@@ -348,7 +348,7 @@ function draw() {
         ctx.beginPath();
         ctx.moveTo(pos.x, pos.y);
         ctx.strokeStyle = "black";
-        ctx.lineWidth = 1 / scale;
+        ctx.lineWidth = 2 / scale;
         ctx.lineCap = "round";
         ctx.lineTo(pos.x + Math.cos(t * rotateCoefficient) * previewRadius / scale, pos.y + Math.sin(t * rotateCoefficient) * previewRadius / scale);
         ctx.stroke();
