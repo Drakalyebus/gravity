@@ -293,7 +293,7 @@ function draw() {
         ctx.arc(object.x, object.y, object.radius, 0, 2 * Math.PI);
         ctx.fillStyle = calculateColor(object);
         ctx.fill();
-        if (followIds.includes(index)) {
+        if (followIds.includes(objects.indexOf(object))) {
             ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
             ctx.lineWidth = 2 / scale;
             ctx.lineCap = "round";
@@ -319,7 +319,7 @@ function draw() {
             ctx.fillStyle = calculateColor(object);
             ctx.arc(pos.x, pos.y, previewRadius / scale, 0, 2 * Math.PI);
             ctx.fill();
-            if (followIds.includes(index)) {
+            if (followIds.includes(objects.indexOf(object))) {
                 ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
                 ctx.lineWidth = 2 / scale;
                 ctx.lineCap = "round";
