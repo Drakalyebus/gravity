@@ -27,7 +27,7 @@ let maxSafeOffset = 0.01;
 let dopplerFactor = 10;
 let fps = 60;
 let t = 0;
-let dt = 1;
+let dt = 0.001;
 let offsetX = 0;
 let offsetY = 0;
 let scale = 1;
@@ -78,10 +78,10 @@ previewCheckbox.addEventListener('change', () => {
 reverseTime.addEventListener('click', () => {
     dt *= -1;
     reversed = !reversed;
-    objects.forEach(object => {
-        object.localTimeDelta *= -1;
-        object.delta.reverse();
-    });
+    // objects.forEach(object => {
+    //     object.localTimeDelta *= -1;
+    //     object.delta.reverse();
+    // });
 });
 syncButton.addEventListener('click', () => {
     objects.forEach(object => {
@@ -172,7 +172,7 @@ function gravity() {
             newDelta.add(direction);
         });
         newDelta.multiply(1 / object.mass);
-        object.delta.add(newDelta);
+        object.delta.add(newDelta.multiply(dt));
         return object;
     });
     if (collision) {
@@ -204,14 +204,9 @@ function gravity() {
             speed = c - maxSafeOffset;
         }
         const gamma = 1 / Math.sqrt(Math.max(1 - speed ** 2 / c ** 2, 0));
-        const phi = -objects.filter(other => other !== object).reduce((acc, other) => {
-            const distance = Math.max(Math.hypot(other.y - object.y, other.x - object.x), object.radius + other.radius);
-            return acc + G * other.mass / distance;
-        }, 0);
-        const factor = Math.sqrt(Math.max(1 + 2 * phi / c ** 2, 0));
-        object.localTimeDelta = factor * gamma * dt;
-        object.x += object.delta.x;
-        object.y += object.delta.y;
+        object.localTimeDelta = gamma * dt;
+        object.x += object.delta.x * dt;
+        object.y += object.delta.y * dt;
         object.localTime += object.localTimeDelta;
         if (!isFinite(object.localTime) || isNaN(object.localTime)) {
             object.localTime = 0;
@@ -355,7 +350,9 @@ function draw() {
     }
 
     if (!onPause) {
-        gravity();
+        for (let batch = 0; batch < Math.abs(1 / dt); batch++) {
+            gravity();
+        }
     }
 
     requestAnimationFrame(draw);
