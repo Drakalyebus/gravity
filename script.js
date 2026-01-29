@@ -23,7 +23,7 @@ let preview = true;
 let previewRadius = 10;
 let reversed = false;
 let c = 299792458;
-let maxSafeOffset = 0.01;
+let maxSafeOffset = 0.001;
 let dopplerFactor = 10;
 let fps = 60;
 let t = 0;
@@ -39,6 +39,10 @@ let collision = false;
 let maxForce = 0;
 let followIds = [];
 let onPause = false;
+
+function fixNumber(num, precision = 1) {
+    return Math.round(num / precision) * precision;
+}
 
 collisionCheckbox.addEventListener('change', () => {
     collision = collisionCheckbox.checked;
@@ -160,7 +164,7 @@ canvas.addEventListener('click', e => {
 });
 
 function gravity() {
-    t += dt;
+    t = fixNumber(t + dt, dt);
     objects = objects.map(object => {
         const newDelta = new Vector(0, 0);
         objects.filter(other => other !== object).forEach(other => {
@@ -211,7 +215,9 @@ function gravity() {
         if (!isFinite(object.localTime) || isNaN(object.localTime)) {
             object.localTime = 0;
         }
-        object.path.push({x: object.x, y: object.y});
+        if (Math.abs(t) % 1 === 0) {
+            object.path.push({x: object.x, y: object.y});
+        }
         if (object.path.length > 1000) {
             object.path.shift();
         }
